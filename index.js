@@ -1,47 +1,66 @@
-const { Client, Collection } = require("discord.js");
-const client = new Client({ intents: [53575421] });
+const { Client } = require('discord.js');
+const { REST } = require('@discordjs/rest');
+const { Routes } = require('discord-api-types/v9');
+const config = require('./config.json');
+const fs = require('fs');
+const path = require('path');
 
-require("dotenv").config;
+// Crear el cliente de Discord
+const client = new Client({ intents: [53608447] });
 
-const config = require("./config.json");
-const { loadSlash } = require("./handlers/slashHandler");
+// Cargar todos los comandos de la carpeta 'commands'
+const commands = [];
+const commandFiles = fs.readdirSync(path.join(__dirname, 'commands')).filter(file => file.endsWith('.js'));
 
-client.on("interactionCreate", async (interaction) => {
-    if(!interaction.isCommands()) return;
-    const cmd = client.slashCommands.get(interaction.commandName);
-    if(!cmd) return;
-
-    const args = [];
-    for (let option of interaction.options.data) {
-        if(option.type === 1){
-            if(option.name) args.push(option.name);
-            option.options?.forEach((x) => {
-                if(x.value) args.push(x.value);
-            });
-        } else if(option.value) args.push(option.value);
+for (const file of commandFiles) {
+    try {
+        const command = require(`./commands/${file}`);
+        commands.push(command.data.toJSON());
+    } catch (error) {
+        console.error(`Error cargando el comando ${file}:`, error);
     }
+}
 
-    cmd.execute(client, interaction, args);
-})
-
-client.slashCommands = new Collection();
+// Registrar los comandos en Discord
+const rest = new REST({ version: '9' }).setToken(config.TOKEN);
 
 (async () => {
-    await client
-    .login(config.TOKEN)
-    .catch((err) =>
-        console.error(`⪢ | Error al iniciar el bot => ${err}`)
-    );
+    try {
+        console.log('Empezando a registrar los comandos Slash...');
+
+        await rest.put(
+            Routes.applicationGuildCommands(config.APP_ID, config.GUILD_ID),
+            { body: commands },
+        );
+
+        console.log('Comandos registrados exitosamente!');
+    } catch (error) {
+        console.error(error);
+    }
 })();
 
-client.on("ready", async () => {
-    await loadSlash(client)
-    .then(() => {
-        console.log("⪢ | Comandos cargados con exito")
-    })
-    .catch((err) =>
-        console.log(`⪢ | Error al cargar los comandos => ${err}`)
-    );
-
-    console.log(`⪢ | Bot encendido con la cuenta de: ${client.user.tag}`)
+// Cuando el bot está listo
+client.once('ready', () => {
+    console.log(`¡El bot ha iniciado sesión como ${client.user.tag}!`);
 });
+
+// Responder a los comandos Slash
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isCommand()) return;
+
+    const { commandName } = interaction;
+
+    // Ejecutar el comando correspondiente
+    const command = require(`./commands/${commandName}.js`);
+    if (command) {
+        try {
+            await command.execute(interaction);
+        } catch (error) {
+            console.error(error);
+            await interaction.reply({ content: 'Hubo un error al ejecutar este comando.', ephemeral: true });
+        }
+    }
+});
+
+// Iniciar sesión con el token
+client.login(config.TOKEN);
