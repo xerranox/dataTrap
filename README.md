@@ -31,4 +31,3 @@
 
 Proximamente se presentará documentación del proyecto.
 
-
