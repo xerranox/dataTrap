@@ -1,4 +1,4 @@
-<h1 align='center'> DataTrap - Un bot de discord creado para <a href="https://discord.gg/UJ88jC8VAC">Corrupted Team</a> </h1>
+<h1 align='center'> DataTrap - Un bot de discord <br> creado para <a href="https://discord.gg/UJ88jC8VAC">Corrupted Team</a> </h1>
 <p align='center'>
   <img alt='Proyect version' src='https://img.shields.io/badge/build-0.2-blue?style=flat-square&label=Version'/> <!-- Version del proyecto -->
   <img alt='Proyect version' src='https://img.shields.io/badge/build-xerranox-magenta?style=flat-square&label=Dev'/> 
@@ -20,7 +20,7 @@
 
 **¡*NOTA*!** - Los comandos están sujetos a cambios durante el desarrollo...
 
-| Command | Parameters | Description |
+| Comando | Parámetros | Descripción |
 | :------ | :--------- | :---------- |
 | `bienvenida` | `string` [**user.id**] *- Required* | Da la bienvenida al usuario que indiques. |
 | `serverinfo` | `null` | Muestra información sobre el servidor. |
