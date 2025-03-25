@@ -7,11 +7,24 @@
 
 ## ❕Recursos usados:
 
-![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)
-![NodeJS](https://img.shields.io/badge/Node%20js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
-![NPM](https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white)
-![Git](https://img.shields.io/badge/GIT-E44C30?style=for-the-badge&logo=git&logoColor=white)
-![VSCode](https://img.shields.io/badge/VSCode-0078D4?style=for-the-badge&logo=visual%20studio%20code&logoColor=white)
+<p align='center'>
+  <img alt='Discord image' src='https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white'/>
+  <img alt='NodeJS image' src='https://img.shields.io/badge/Node%20js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white'/>
+  <img alt='NPM image' src='https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white'/>
+  <img alt='Git image' src='https://img.shields.io/badge/GIT-E44C30?style=for-the-badge&logo=git&logoColor=white'/>
+  <img alt='VSCode image' src='https://img.shields.io/badge/VSCode-0078D4?style=for-the-badge&logo=visual%20studio%20code&logoColor=white'/>
+</p>
+
+## 🔧 Funcionalidades:
+
+**¡*NOTA*!** - Los comandos están sujetos a cambios durante el desarrollo...
+
+| Command | Parameters | Description |
+| :------ | :--------- | :---------- |
+| `bienvenida` | `string` [**user.id**] *- Required* | Da la bienvenida al usuario que indiques. |
+| `serverinfo` | `null` | Muestra información sobre el servidor. |
+| `mentionrole` | `string` [**role.id**] *- Required* | Menciona un rol específico. |
+| `feedchannel` | `string` [**channel.id**] *- Required* | Menciona un canal específico. |
 
 ## 📖 Documentación:
 
