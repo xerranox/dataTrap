@@ -1,4 +1,4 @@
-const { Client } = require('discord.js');
+const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const config = require('./config.json');
@@ -6,15 +6,25 @@ const fs = require('fs');
 const path = require('path');
 
 // Crear el cliente de Discord
-const client = new Client({ intents: [53608447] });
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMembers
+    ]
+});
 
 // Cargar todos los comandos de la carpeta 'commands'
+client.commands = new Collection();
+
 const commands = [];
 const commandFiles = fs.readdirSync(path.join(__dirname, 'commands')).filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
     try {
         const command = require(`./commands/${file}`);
+        client.commands.set(command.data.name, command);
         commands.push(command.data.toJSON());
     } catch (error) {
         console.error(`Error cargando el comando ${file}:`, error);
@@ -48,17 +58,17 @@ client.once('ready', () => {
 client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return;
 
-    const { commandName } = interaction;
+    const command = client.commands.get(interaction.commandName);
 
-    // Ejecutar el comando correspondiente
-    const command = require(`./commands/${commandName}.js`);
-    if (command) {
-        try {
-            await command.execute(interaction);
-        } catch (error) {
-            console.error(error);
-            await interaction.reply({ content: 'Hubo un error al ejecutar este comando.', ephemeral: true });
-        }
+    if (!command) {
+        return interaction.reply({ content: 'Este comando no existe.', ephemeral: true });
+    }
+
+    try {
+        await command.execute(interaction);
+    } catch (error) {
+        console.error(error);
+        await interaction.reply({ content: 'Hubo un error al ejecutar este comando.', ephemeral: true });
     }
 });
 
