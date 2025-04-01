@@ -22,10 +22,11 @@
 
 | Comando | Parámetros | Descripción |
 | :------ | :--------- | :---------- |
-| `bienvenida` | `string` [**user.id**] *- Required* | Da la bienvenida al usuario que indiques. |
 | `serverinfo` | `null` | Muestra información sobre el servidor. |
 | `mentionrole` | `string` [**role.id**] *- Required* | Menciona un rol específico. |
-| `feedchannel` | `string` [**channel.id**] *- Required* | Menciona un canal específico. |
+| `feedchannel` | `string` [**channel.id**] *- Required* | Menciona un hilo de feedback específico. |
+| `ayudaproyecto` | `null` | Pide ayuda para tu proyecto. |
+| `crearproyecto` | `string` [**channel.id**] [**role.id**] [**user.id**] *- Required* | Crea un canal de proyecto automáticamente. (**Comando de administrador**) |
 
 ## 📖 Documentación:
 
