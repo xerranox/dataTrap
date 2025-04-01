@@ -27,7 +27,7 @@ module.exports = {
             }
 
             // Enviar el mensaje mencionando al rol
-            await interaction.reply({ content: `📢 ¡Atención ${unirseRole}!`, allowedMentions: { roles: [unirseRole.id] } });
+            await interaction.reply({ content: `📢 ¡Atención ${unirseRole}, <@${member.id}> necesita ayuda con su proyecto!`, allowedMentions: { roles: [unirseRole.id] } });
 
         } catch (error) {
             console.error('Error ejecutando el comando pingproyecto:', error);
