@@ -1,6 +1,6 @@
 <h1 align='center'> DataTrap - Un bot de discord <br> creado para <a href="https://discord.gg/UJ88jC8VAC">Corrupted Team</a> </h1>
 <p align='center'>
-  <img alt='Proyect version' src='https://img.shields.io/badge/build-0.2-blue?style=flat-square&label=Version'/> <!-- Version del proyecto -->
+  <img alt='Proyect version' src='https://img.shields.io/badge/build-0.4-blue?style=flat-square&label=Version'/> <!-- Version del proyecto -->
   <img alt='Proyect version' src='https://img.shields.io/badge/build-xerranox-magenta?style=flat-square&label=Dev'/> 
   <img alt='Proyect version' src='https://img.shields.io/badge/build-Poco_funcional-red?style=flat-square&label=Estado'/> <!-- Estado del proyecto -->
 </p>
