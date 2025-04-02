@@ -1,8 +1,8 @@
 <h1 align='center'> DataTrap - Un bot de discord <br> creado para <a href="https://discord.gg/UJ88jC8VAC">Corrupted Team</a> </h1>
 <p align='center'>
-  <img alt='Proyect version' src='https://img.shields.io/badge/build-0.4-blue?style=flat-square&label=Version'/> <!-- Version del proyecto -->
-  <img alt='Proyect version' src='https://img.shields.io/badge/build-xerranox-magenta?style=flat-square&label=Dev'/> 
-  <img alt='Proyect version' src='https://img.shields.io/badge/build-Poco_funcional-red?style=flat-square&label=Estado'/> <!-- Estado del proyecto -->
+  <img alt='Project version' src='https://img.shields.io/badge/build-0.4-blue?style=flat-square&label=Version'/> <!-- Version del proyecto -->
+  <img alt='Project owner' src='https://img.shields.io/badge/build-xerranox-magenta?style=flat-square&label=Dev'/> <!-- Creador del proyecto -->
+  <img alt='Project state' src='https://img.shields.io/badge/build-Poco_funcional-red?style=flat-square&label=Estado'/> <!-- Estado del proyecto -->
 </p>
 
 ## ❕Recursos usados:
@@ -28,7 +28,9 @@
 | `ayudaproyecto` | `null` | Pide ayuda para tu proyecto. |
 | `crearproyecto` | `string` [**channel.id**] [**role.id**] [**user.id**] *- Required* | Crea un canal de proyecto automáticamente. (**Comando de administrador**) |
 
-## 📖 Documentación:
+## 📖 Documentación: 
+<img alt='Project wiki' src='https://img.shields.io/badge/VER_WIKI-8A2BE2?style=for-the-badge'/> <!-- Wiki del proyecto -->
 
-Proximamente se presentará documentación del proyecto.
+
+
 
