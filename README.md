@@ -28,8 +28,7 @@
 | `ayudaproyecto` | `null` | Pide ayuda para tu proyecto. |
 | `crearproyecto` | `string` [**channel.id**] [**role.id**] [**user.id**] *- Required* | Crea un canal de proyecto automáticamente. (**Comando de administrador**) |
 
-## 📖 Documentación: 
-<img alt='Project wiki' src='https://img.shields.io/badge/VER_WIKI-8A2BE2?style=for-the-badge'/> <!-- Wiki del proyecto -->
+## 📖 Documentación:  <a href="https://github.com/xerranox/dataTrap/wiki/WIKI">WIKI</a>
 
 
 
