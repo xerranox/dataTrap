@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const config = require('../config.json');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -10,9 +11,18 @@ module.exports = {
                 .setRequired(true)),
 
     async execute(interaction) {
+        const { guild, member } = interaction;
         const channel = interaction.options.getChannel('channel');
 
-        // Verificar si el canal es un canal de foro
+        const directorRole = guild.roles.cache.find(role => role.id === config.ROL_DIRECTOR_PROYECTO);
+        if (!directorRole) {
+            return interaction.reply({ content: "❌ No se encontró el rol 'Director de Proyecto'.", ephemeral: true });
+        }
+
+        if (!member.roles.cache.has(directorRole.id)) {
+            return interaction.reply({ content: "🚫 No tienes permisos para usar este comando.", ephemeral: true });
+        }
+
         if (channel && channel.isThread()) {
             await interaction.reply(`Puede dar feedback a mi proyecto aquí: <#${channel.id}>`);
         } else {

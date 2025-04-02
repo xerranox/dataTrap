@@ -5,7 +5,6 @@ const config = require('./config.json');
 const fs = require('fs');
 const path = require('path');
 
-// Crear el cliente de Discord
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -15,7 +14,6 @@ const client = new Client({
     ]
 });
 
-// Cargar todos los comandos de la carpeta 'commands'
 client.commands = new Collection();
 
 const commands = [];
@@ -27,11 +25,10 @@ for (const file of commandFiles) {
         client.commands.set(command.data.name, command);
         commands.push(command.data.toJSON());
     } catch (error) {
-        console.error(`Error cargando el comando ${file}:`, error);
+        console.error(`❌ Error cargando el comando ${file}:`, error);
     }
 }
 
-// Registrar los comandos en Discord
 const rest = new REST({ version: '9' }).setToken(config.TOKEN);
 
 (async () => {
@@ -49,28 +46,25 @@ const rest = new REST({ version: '9' }).setToken(config.TOKEN);
     }
 })();
 
-// Cuando el bot está listo
 client.once('ready', () => {
     console.log(`¡El bot ha iniciado sesión como ${client.user.tag}!`);
 });
 
-// Responder a los comandos Slash
 client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return;
 
     const command = client.commands.get(interaction.commandName);
 
     if (!command) {
-        return interaction.reply({ content: 'Este comando no existe.', ephemeral: true });
+        return interaction.reply({ content: '❌ Este comando no existe.', ephemeral: true });
     }
 
     try {
         await command.execute(interaction);
     } catch (error) {
         console.error(error);
-        await interaction.reply({ content: 'Hubo un error al ejecutar este comando.', ephemeral: true });
+        await interaction.reply({ content: '❌ Hubo un error al ejecutar este comando.', ephemeral: true });
     }
 });
 
-// Iniciar sesión con el token
 client.login(config.TOKEN);

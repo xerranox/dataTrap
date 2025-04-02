@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { PermissionsBitField } = require('discord.js');
+const config = require('../config.json');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -16,20 +17,52 @@ module.exports = {
         .addUserOption(option =>
             option.setName('usuario')
                 .setDescription('Usuario al que se le asignará el rol')
+                .setRequired(true))
+        .addStringOption(option =>
+            option.setName('nombre-proyecto')
+                .setDescription('Nombre del proyecto que se mostrará en proyectos actuales')
+                .setRequired(true))
+        .addStringOption(option =>
+            option.setName('genero')
+                .setDescription('Género del proyecto que se mostrará en proyectos actuales')
+                .setRequired(true))
+        .addStringOption(option =>
+            option.setName('descripcion')
+                .setDescription('Descripcion del proyecto que se mostrará en proyectos actuales')
+                .setRequired(true))
+        .addAttachmentOption(option =>
+            option.setName('imagen')
+                .setDescription('Imagen del proyecto que se mostrará en proyectos actuales')
                 .setRequired(true)),
 
     async execute(interaction) {
         const { guild } = interaction;
-        const nombreCanal = interaction.options.getString('nombre'); // Obtiene el nombre del canal
-        const nombreRol = interaction.options.getString('rol'); // Obtiene el nombre del rol
-        const usuario = interaction.options.getUser('usuario'); // Obtiene el usuario al que se asignará el rol
+        const nombreCanal = interaction.options.getString('nombre');
+        const nombreRol = interaction.options.getString('rol');
+        const usuario = interaction.options.getUser('usuario');
+        const nombre_proyecto = interaction.options.getString('nombre-proyecto');
+        const genero = interaction.options.getString('genero');
+        const descripcion = interaction.options.getString('descripcion');
+        const imagen = interaction.options.getAttachment('imagen');
+        const canal_proyectos = guild.channels.cache.get(config.CANAL_PROYECTOS_ACTIVOS);
+        const foro = await guild.channels.fetch(config.FOROS_PROYECTOS);
+        const categoriaID = config.CATEGORIA_PROYECTOS;
+
+        if (!interaction.member.roles.cache.some(role => role.name === config.ROL_ADMINISTRADOR_HELPER || role.name === config.ROL_ADMINISTRADOR_ADMIN || role.name === config.ROL_ADMINISTRADOR_BOSS)) {
+            return interaction.reply('❌ No tienes permisos para ejecutar este comando.');
+        }
 
         if (!nombreCanal || !nombreRol || !usuario) {
             return interaction.reply('❌ El nombre del canal, el nombre del rol y el usuario son necesarios.');
         }
 
         try {
-            // Crear un rol con el nombre proporcionado si no existe
+            const categoria = guild.channels.cache.get(categoriaID);
+
+            if (!categoria) {
+                return interaction.reply('❌ La categoría no se encuentra.');
+            }
+
             let rol = guild.roles.cache.find(r => r.name === nombreRol);
             if (!rol) {
                 rol = await guild.roles.create({
@@ -38,28 +71,49 @@ module.exports = {
                 });
             }
 
-            // Crear un canal de texto con permisos específicos para el rol
             const nuevoCanal = await guild.channels.create({
                 name: nombreCanal,
-                type: 0, // Canal de texto
+                type: 0,
+                parent: categoria.id,
                 permissionOverwrites: [
                     {
-                        id: guild.id, // Permisos por defecto para todos
-                        deny: [PermissionsBitField.Flags.SendMessages], // No ver el canal por defecto
+                        id: guild.id,
+                        deny: [PermissionsBitField.Flags.SendMessages],
                     },
                     {
-                        id: rol.id, // Asignamos permisos al rol creado
-                        allow: [PermissionsBitField.Flags.SendMessages], // Permitir ver y escribir
+                        id: rol.id,
+                        allow: [PermissionsBitField.Flags.SendMessages],
                     },
                 ],
             });
 
-            // Asignar el rol creado al usuario seleccionado
+            const nuevoHilo = await foro.threads.create({
+                name: nombre_proyecto,
+                autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
+                type: 'PUBLIC',
+                reason: 'Publicacion de proyecto',
+            });
+
+            await nuevoHilo.send({
+                content: ``,
+                files: [{
+                    attachment: imagen.url,
+                    name: 'hilo-imagen.png',
+                }],
+            });
+
             const miembro = await guild.members.fetch(usuario.id);
             await miembro.roles.add(rol);
 
-            // Enviar un mensaje al canal recién creado
-            await nuevoCanal.send(`${rol} Ya deberíais ser capaz de escribir aquí. Este mensaje permanecerá aquí para que recuerdes los beneficios de ostentar con el canal. Podemos eliminarlo si lo deseas.\n **Recuerda que cuentas con los siguientes beneficios:**\n - Crear hilos en el canal\n - Fijar mensajes\n - Crear encuestas\n - Usar <#1161383380093521940> para pedir ayuda y gente se una a tu proyecto.\n_¡Recordar pasar contenido  antes de __una semana__ **para que no tengamos que archivar el canal por estar vacío!**_ \n **--**\n _Después de esos  primeros avances pasaréis a tener 4 semanas de margen como todo el mundo. Más info en_ <#717006470272516157>`);
+            await nuevoCanal.send(`${rol} Ya deberíais ser capaz de escribir aquí. Este mensaje permanecerá aquí para que recuerdes los beneficios de ostentar con el canal. Podemos eliminarlo si lo deseas.\n\n**Recuerda que cuentas con los siguientes beneficios:**\n- Crear hilos en el canal\n- Fijar mensajes\n - Crear encuestas\n- Usar <#1161383380093521940> para pedir ayuda y gente se una a tu proyecto.\n_¡Recordar pasar contenido  antes de __una semana__ **para que no tengamos que archivar el canal por estar vacío!**_ \n**--**\n_Después de esos  primeros avances pasaréis a tener 4 semanas de margen como todo el mundo. Más info en_ <#717006470272516157>`);
+
+            await canal_proyectos.send({
+                content: `${nombre_proyecto}\nGénero: ${genero}\nProyecto de: ${usuario}\n\n${descripcion}`,
+                files: [{
+                    attachment: imagen.url,
+                    name: 'proyecto-imagen.png',
+                }],
+            });
 
             await interaction.reply(`✅ El canal **${nombreCanal}** ha sido creado con éxito y el rol **${rol.name}** ha sido asignado a este canal.`);
 
