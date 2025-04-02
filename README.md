@@ -26,7 +26,7 @@
 | `mentionrole` | `string` [**role.id**] *- Required* | Menciona un rol específico. |
 | `feedchannel` | `string` [**channel.id**] *- Required* | Menciona un hilo de feedback específico. |
 | `ayudaproyecto` | `null` | Pide ayuda para tu proyecto. |
-| `crearproyecto` | `string` [**channel.id**] [**role.id**] [**user.id**] [**String**] [**String**] [**String**] [**Attachment**] *- Required* | Crea un canal de proyecto automáticamente. (**Comando de administrador**) |
+| `crearproyecto` | `string` [**channel.id**] `string` [**role.id**] `string` [**user.id**] `string` [**String**]  `string` [**String**] `string` [**String**] `Atachment` [**Attachment**] *- Required* | Crea un canal de proyecto automáticamente. (**Comando de administrador**) |
 
 ## 📖 Documentación:  <a href="https://github.com/xerranox/dataTrap/wiki/WIKI">WIKI</a>
 
