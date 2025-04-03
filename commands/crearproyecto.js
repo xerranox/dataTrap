@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { PermissionsBitField } = require('discord.js');
+const { PermissionsBitField, ThreadAutoArchiveDuration } = require('discord.js');
 const config = require('../config.json');
 
 module.exports = {
@@ -13,6 +13,10 @@ module.exports = {
         .addStringOption(option =>
             option.setName('rol')
                 .setDescription('Nombre del rol que se creará y se asignará al canal')
+                .setRequired(true))
+        .addStringOption(option =>
+            option.setName('color')
+                .setDescription('Color del rol en formato HEX (ejemplo: #FF0000 para rojo)')
                 .setRequired(true))
         .addUserOption(option =>
             option.setName('usuario')
@@ -39,24 +43,26 @@ module.exports = {
         const { guild } = interaction;
         const nombreCanal = interaction.options.getString('nombre');
         const nombreRol = interaction.options.getString('rol');
+        const colorHex = interaction.options.getString('color');
         const usuario = interaction.options.getUser('usuario');
         const nombre_proyecto = interaction.options.getString('nombre-proyecto');
         const genero = interaction.options.getString('genero');
         const descripcion = interaction.options.getString('descripcion');
         const imagen = interaction.options.getAttachment('imagen');
         const canal_proyectos = guild.channels.cache.get(config.CANAL_PROYECTOS_ACTIVOS);
-        const foro = await guild.channels.fetch(config.FOROS_PROYECTOS);
+        const foro = await guild.channels.fetch(config.FORO_PROYECTOS);
         const categoriaID = config.CATEGORIA_PROYECTOS;
 
-        if (!interaction.member.roles.cache.some(role => role.name === config.ROL_ADMINISTRADOR_HELPER || role.name === config.ROL_ADMINISTRADOR_ADMIN || role.name === config.ROL_ADMINISTRADOR_BOSS)) {
+        /* if (!interaction.member.roles.cache.some(role => role.name === config.ROL_ADMINISTRADOR_HELPER || role.name === config.ROL_ADMINISTRADOR_ADMIN || role.name === config.ROL_ADMINISTRADOR_BOSS)) {
             return interaction.reply('❌ No tienes permisos para ejecutar este comando.');
-        }
+        } */
 
         if (!nombreCanal || !nombreRol || !usuario) {
             return interaction.reply('❌ El nombre del canal, el nombre del rol y el usuario son necesarios.');
         }
 
         try {
+            await interaction.deferReply();
             const categoria = guild.channels.cache.get(categoriaID);
 
             if (!categoria) {
@@ -70,6 +76,12 @@ module.exports = {
                     reason: 'Rol creado para acceso específico al canal',
                 });
             }
+
+            if (!/^#[0-9A-F]{6}$/i.test(colorHex)) {
+                return interaction.reply({ content: '❌ Formato de color inválido. Usa un código HEX (ejemplo: #FF0000).', ephemeral: true });
+            }
+
+            const colorDecimal = parseInt(colorHex.replace('#', ''), 16);
 
             const nuevoCanal = await guild.channels.create({
                 name: nombreCanal,
@@ -89,18 +101,25 @@ module.exports = {
 
             const nuevoHilo = await foro.threads.create({
                 name: nombre_proyecto,
+                color: colorDecimal,
+                message: {  // ¡Obligatorio en foros!
+                    content: " ",  // Mensaje inicial (puede ser un espacio o texto)
+                    files: [{
+                        attachment: imagen.url,
+                        name: 'hilo-imagen.png',
+                    }],
+                },
                 autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
-                type: 'PUBLIC',
                 reason: 'Publicacion de proyecto',
             });
 
-            await nuevoHilo.send({
-                content: ``,
+            /* await nuevoHilo.send({
+                content: " ", // O un mensaje descriptivo
                 files: [{
                     attachment: imagen.url,
                     name: 'hilo-imagen.png',
                 }],
-            });
+            }); */
 
             const miembro = await guild.members.fetch(usuario.id);
             await miembro.roles.add(rol);
@@ -115,11 +134,11 @@ module.exports = {
                 }],
             });
 
-            await interaction.reply(`✅ El canal **${nombreCanal}** ha sido creado con éxito y el rol **${rol.name}** ha sido asignado a este canal.`);
+            await interaction.editReply(`✅ El canal **${nombreCanal}** ha sido creado con éxito y el rol **${rol.name}** ha sido asignado a este canal.`);
 
         } catch (error) {
             console.error(error);
-            await interaction.reply('❌ Hubo un error al crear el canal o el rol.');
+            await interaction.followUp('❌ Hubo un error al crear el canal o el rol.');
         }
     },
 };
