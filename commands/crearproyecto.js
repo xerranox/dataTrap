@@ -66,22 +66,23 @@ module.exports = {
             const categoria = guild.channels.cache.get(categoriaID);
 
             if (!categoria) {
-                return interaction.reply('❌ La categoría no se encuentra.');
+                return interaction.editReply('❌ La categoría no se encuentra.');
             }
+
+            if (!/^#[0-9A-F]{6}$/i.test(colorHex)) {
+                return interaction.editReply({ content: '❌ Formato de color inválido. Usa un código HEX (ejemplo: #FF0000).', ephemeral: true });
+            }
+
+            const colorDecimal = parseInt(colorHex.replace('#', ''), 16);
 
             let rol = guild.roles.cache.find(r => r.name === nombreRol);
             if (!rol) {
                 rol = await guild.roles.create({
                     name: nombreRol,
+                    color: colorDecimal,
                     reason: 'Rol creado para acceso específico al canal',
                 });
             }
-
-            if (!/^#[0-9A-F]{6}$/i.test(colorHex)) {
-                return interaction.reply({ content: '❌ Formato de color inválido. Usa un código HEX (ejemplo: #FF0000).', ephemeral: true });
-            }
-
-            const colorDecimal = parseInt(colorHex.replace('#', ''), 16);
 
             const nuevoCanal = await guild.channels.create({
                 name: nombreCanal,
@@ -127,7 +128,7 @@ module.exports = {
             await nuevoCanal.send(`${rol} Ya deberíais ser capaz de escribir aquí. Este mensaje permanecerá aquí para que recuerdes los beneficios de ostentar con el canal. Podemos eliminarlo si lo deseas.\n\n**Recuerda que cuentas con los siguientes beneficios:**\n- Crear hilos en el canal\n- Fijar mensajes\n - Crear encuestas\n- Usar <#1161383380093521940> para pedir ayuda y gente se una a tu proyecto.\n_¡Recordar pasar contenido  antes de __una semana__ **para que no tengamos que archivar el canal por estar vacío!**_ \n**--**\n_Después de esos  primeros avances pasaréis a tener 4 semanas de margen como todo el mundo. Más info en_ <#717006470272516157>`);
 
             await canal_proyectos.send({
-                content: `${nombre_proyecto}\nGénero: ${genero}\nProyecto de: ${usuario}\n\n${descripcion}`,
+                content: `**${nombre_proyecto}**\nGénero: ${genero}\nProyecto de: ${usuario}\n\n${descripcion}`,
                 files: [{
                     attachment: imagen.url,
                     name: 'proyecto-imagen.png',
